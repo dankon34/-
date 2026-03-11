@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>喜不喜欢扑扑🥰</title>
+<title>扑扑可不可爱</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -16,21 +16,25 @@
     font-family:微软雅黑,sans-serif;
     padding:20px;
     gap:20px;
+    transition: background 0.3s;
+    overflow-x: hidden;
   }
   #face{
     font-size:80px;
     animation:jump 0.3s infinite alternate;
   }
   .title-box {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display:flex;
+    align-items:center;
+    gap:12px;
   }
-  .title-box img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+  .pupu-img {
+    width:200px;
+    height:200px;
+    border-radius:20px;
+    object-fit:cover;
+    border:3px solid #ff6699;
+    transition: transform 0.2s;
   }
   h1{
     font-size:26px;
@@ -48,6 +52,12 @@
     font-size:18px;
     border:none;
     border-radius:14px;
+    transition:0.3s;
+    animation:breath 2s infinite alternate;
+  }
+  @keyframes breath {
+    from{box-shadow:0 0 5px rgba(255,255,255,0.5)}
+    to{box-shadow:0 0 20px rgba(255,102,153,0.7)}
   }
   #yes{
     background:#ff6699;
@@ -69,6 +79,24 @@
   .sad{
     animation:shake 0.2s infinite;
   }
+  .heart{
+    position:fixed;
+    pointer-events:none;
+    animation:fly 1s linear forwards;
+    font-size:20px;
+  }
+  @keyframes fly{
+    0%{transform:translateY(0);opacity:1}
+    100%{transform:translateY(-500px);opacity:0}
+  }
+  .miao{
+    position: fixed;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff6699;
+    pointer-events: none;
+    transition: transform 0.1s;
+  }
 </style>
 </head>
 <body>
@@ -76,57 +104,115 @@
 <div id="face">🥰</div>
 
 <div class="title-box">
-  <img src="https://raw.githubusercontent.com/dankon34/-/main/P20260304-010216(1).jpg" alt="扑扑">
-  <h1>你喜欢扑扑吗？</h1>
+  <img class="pupu-img" src="https://raw.githubusercontent.com/dankon34/-/main/P20260304-010216(1).jpg" alt="扑扑">
+  <h1>扑扑可不可爱</h1>
 </div>
 
 <div class="btns">
-  <button id="yes">喜欢</button>
-  <button id="no">不喜欢</button>
+  <button id="yes">可爱</button>
+  <button id="no">不可爱</button>
 </div>
 
 <script>
 const face = document.getElementById('face');
 const yes = document.getElementById('yes');
 const no = document.getElementById('no');
+const pupuImg = document.querySelector('.pupu-img');
 
-let happyLevel = 0;
+let happyIndex = 0;
 let noCount = 0;
+let yesCount = 0;
+let rewardGiven = false;
 
-const happyFaces = ['🥰','😊','😄','😆','😁','🥳','🤩','💖'];
+const cuteFaces = ['😉','😝','😘','😍','😌','☺️','😋','😛','🥰','😺','😸','😽'];
+
+let tiltX = 0;
+if (window.DeviceOrientationEvent) {
+  window.addEventListener('deviceorientation', (e) => {
+    tiltX = e.gamma || 0;
+  });
+}
+
+function createMiao() {
+  const m = document.createElement('div');
+  m.classList.add('miao');
+  m.innerText = '喵';
+  m.style.left = Math.random() * window.innerWidth + 'px';
+  m.style.top = Math.random() * window.innerHeight + 'px';
+  document.body.appendChild(m);
+
+  function update() {
+    if (!m.isConnected) return;
+    m.style.transform = `translateX(${tiltX * 1.5}px)`;
+    requestAnimationFrame(update);
+  }
+  update();
+  setTimeout(() => m.remove(), 3000);
+}
 
 yes.onclick = () => {
   face.classList.remove('sad');
   face.style.animation = 'jump 0.3s infinite alternate';
-  happyLevel++;
-  if(happyLevel >= happyFaces.length) happyLevel = happyFaces.length - 1;
-  face.innerText = happyFaces[happyLevel];
+  
+  face.innerText = cuteFaces[happyIndex];
+  happyIndex = (happyIndex + 1) % cuteFaces.length;
+
+  yesCount++;
+  
+  // 一次点出 10 个喵！
+  for(let i=0; i<10; i++) {
+    createMiao();
+  }
+
+  if (yesCount >= 3 && !rewardGiven) {
+    rewardGiven = true;
+    alert('我将立刻打赏你三千万，千万要幸福🥰千万要健康😘千万要快乐💃🏻');
+  }
+  createHeart();
 };
 
 no.onclick = () => {
   noCount++;
-  face.innerText = '😢';
+  face.innerText = '😡';
   face.classList.add('sad');
   face.style.animation = 'shake 0.2s infinite';
-  
-  if(noCount >= 2){
-    no.style.display = 'none';
-  }
+
+  document.body.style.background = '#ff9999';
+  document.body.style.animation = 'shake 0.2s 2';
+  setTimeout(() => {
+    document.body.style.background = 'linear-gradient(135deg,#ffd1e7,#ffe6f2)';
+    document.body.style.animation = '';
+  }, 400);
 };
 
-no.addEventListener('mouseover',()=>{
-  if(noCount < 2){
-    no.style.left = Math.random()*200-100 + 'px';
-    no.style.top = Math.random()*200-100 + 'px';
+no.addEventListener('mouseover', () => {
+  if (noCount >= 3) {
+    no.style.left = Math.random() * 500 - 250 + 'px';
+    no.style.top = Math.random() * 500 - 250 + 'px';
+  } else {
+    no.style.left = Math.random() * 200 - 100 + 'px';
+    no.style.top = Math.random() * 200 - 100 + 'px';
   }
 });
-no.addEventListener('touchstart',(e)=>{
+no.addEventListener('touchstart', (e) => {
   e.preventDefault();
-  if(noCount < 2){
-    no.style.left = Math.random()*200-100 + 'px';
-    no.style.top = Math.random()*200-100 + 'px';
+  if (noCount >= 3) {
+    no.style.left = Math.random() * 500 - 250 + 'px';
+    no.style.top = Math.random() * 500 - 250 + 'px';
+  } else {
+    no.style.left = Math.random() * 200 - 100 + 'px';
+    no.style.top = Math.random() * 200 - 100 + 'px';
   }
 });
+
+function createHeart() {
+  let h = document.createElement('div');
+  h.className = 'heart';
+  h.innerText = '❤️';
+  h.style.left = Math.random() * window.innerWidth + 'px';
+  document.body.appendChild(h);
+  setTimeout(() => h.remove(), 1000);
+}
 </script>
 </body>
 </html>
