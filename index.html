@@ -5,73 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>喜不喜欢扑扑🥰</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-background:#ffeef8;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-min-height:100vh;
-font-family:微软雅黑,sans-serif;
-padding:20px;
-}
-h1{
-font-size:28px;
-color:#ff66b2;
-margin-bottom:30px;
-text-align:center;
-}
-.btns{
-display:flex;
-flex-direction:column;
-gap:15px;
-width:100%;
-max-width:300px;
-}
-button{
-padding:18px;
-font-size:20px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-}
-#yes{
-background:#ff66b2;
-color:white;
-}
-#no{
-background:#ccc;
-color:white;
-position:relative;
-}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:linear-gradient(135deg,#ffd1e7,#ffe6f2);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    font-family:微软雅黑,sans-serif;
+    padding:20px;
+    gap:20px;
+  }
+  #face{
+    font-size:80px;
+    animation:jump 0.3s infinite alternate;
+  }
+  .title-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .title-box img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  h1{
+    font-size:26px;
+    color:#ff4488;
+  }
+  .btns{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    width:100%;
+    max-width:280px;
+  }
+  button{
+    padding:18px;
+    font-size:18px;
+    border:none;
+    border-radius:14px;
+  }
+  #yes{
+    background:#ff6699;
+    color:white;
+  }
+  #no{
+    background:#ccc;
+    position:relative;
+  }
+  @keyframes jump{
+    from{transform:translateY(0)}
+    to{transform:translateY(-10px)}
+  }
+  @keyframes shake{
+    0%,100%{transform:rotate(0)}
+    25%{transform:rotate(-10deg)}
+    75%{transform:rotate(10deg)}
+  }
+  .sad{
+    animation:shake 0.2s infinite;
+  }
 </style>
 </head>
 <body>
 
-<h1>喜不喜欢扑扑🥰</h1>
+<div id="face">🥰</div>
+
+<div class="title-box">
+  <img src="https://raw.githubusercontent.com/dankon34/-/main/P20260304-010216(1).jpg" alt="扑扑">
+  <h1>你喜欢扑扑吗？</h1>
+</div>
+
 <div class="btns">
-<button id="yes">喜欢🥰</button>
-<button id="no">不喜欢😢</button>
+  <button id="yes">喜欢</button>
+  <button id="no">不喜欢</button>
 </div>
 
 <script>
+const face = document.getElementById('face');
 const yes = document.getElementById('yes');
 const no = document.getElementById('no');
 
-yes.onclick = ()=>{
-alert('我就知道你最喜欢扑扑啦🥰！');
+let happyLevel = 0;
+let noCount = 0;
+
+const happyFaces = ['🥰','😊','😄','😆','😁','🥳','🤩','💖'];
+
+yes.onclick = () => {
+  face.classList.remove('sad');
+  face.style.animation = 'jump 0.3s infinite alternate';
+  happyLevel++;
+  if(happyLevel >= happyFaces.length) happyLevel = happyFaces.length - 1;
+  face.innerText = happyFaces[happyLevel];
+};
+
+no.onclick = () => {
+  noCount++;
+  face.innerText = '😢';
+  face.classList.add('sad');
+  face.style.animation = 'shake 0.2s infinite';
+  
+  if(noCount >= 2){
+    no.style.display = 'none';
+  }
 };
 
 no.addEventListener('mouseover',()=>{
-no.style.left = Math.random()*(window.innerWidth-120)+'px';
-no.style.top = Math.random()*(window.innerHeight-60)+'px';
+  if(noCount < 2){
+    no.style.left = Math.random()*200-100 + 'px';
+    no.style.top = Math.random()*200-100 + 'px';
+  }
 });
-
 no.addEventListener('touchstart',(e)=>{
-e.preventDefault();
-no.style.left = Math.random()*(window.innerWidth-120)+'px';
-no.style.top = Math.random()*(window.innerHeight-60)+'px';
+  e.preventDefault();
+  if(noCount < 2){
+    no.style.left = Math.random()*200-100 + 'px';
+    no.style.top = Math.random()*200-100 + 'px';
+  }
 });
 </script>
 </body>
